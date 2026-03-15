@@ -14,7 +14,6 @@ import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -167,30 +166,19 @@ class MainActivity : AppCompatActivity() {
             sendRefreshIntent()
         }
         setupIconRow()
-        setupAlphaSeekBar()
-        setupSizeSeekBar()
     }
 
     private fun updatePreview() {
         val bgColor = AppPrefs.getBgColor(this)
         val fgColor = AppPrefs.getFgColor(this)
-        val alpha = AppPrefs.getAlpha(this)
         val icon = AppPrefs.getIcon(this)
-        val sizeDp = AppPrefs.getSize(this)
-
-        val sizePx = (sizeDp * resources.displayMetrics.density).toInt()
 
         previewButton.text = icon
-        previewButton.textSize = (sizeDp * 0.43f)
         previewButton.setTextColor(fgColor)
-        previewButton.alpha = alpha
+        previewButton.alpha = 1.0f
         previewButton.background = GradientDrawable().apply {
             shape = GradientDrawable.OVAL
             setColor(bgColor)
-        }
-        previewButton.layoutParams = previewButton.layoutParams.apply {
-            width = sizePx
-            height = sizePx
         }
     }
 
@@ -254,43 +242,4 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupAlphaSeekBar() {
-        val seekBar = findViewById<SeekBar>(R.id.alpha_seekbar)
-        val currentAlpha = AppPrefs.getAlpha(this)
-        // SeekBar range: 0~80 maps to 0.2~1.0
-        seekBar.progress = ((currentAlpha - 0.2f) * 100).toInt()
-
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                val alpha = 0.2f + progress / 100f
-                AppPrefs.setAlpha(this@MainActivity, alpha)
-                updatePreview()
-                sendRefreshIntent()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-    }
-
-    private fun setupSizeSeekBar() {
-        val seekBar = findViewById<SeekBar>(R.id.size_seekbar)
-        val currentSize = AppPrefs.getSize(this)
-        // SeekBar range: 0~40 maps to 40~80dp
-        seekBar.progress = currentSize - 40
-
-        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (!fromUser) return
-                val sizeDp = 40 + progress
-                AppPrefs.setSize(this@MainActivity, sizeDp)
-                updatePreview()
-                sendRefreshIntent()
-            }
-
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-    }
 }
