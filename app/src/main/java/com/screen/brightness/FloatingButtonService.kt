@@ -163,13 +163,8 @@ class FloatingButtonService : Service() {
             setSize(newButtonSize, newButtonSize)
         }
 
-        if (BrightnessHelper.isMaxBrightness) {
-            button.alpha = 1.0f
-            button.setTextColor(Color.YELLOW)
-        } else {
-            button.alpha = alpha
-            button.setTextColor(fgColor)
-        }
+        button.alpha = alpha
+        button.setTextColor(if (BrightnessHelper.isMaxBrightness) Color.YELLOW else fgColor)
 
         if (newButtonSize != currentButtonSize) {
             currentButtonSize = newButtonSize
@@ -257,12 +252,7 @@ class FloatingButtonService : Service() {
 
     private fun updateButtonAppearance() {
         val button = floatingButton as TextView
-        if (BrightnessHelper.isMaxBrightness) {
-            button.alpha = 1.0f
-            button.setTextColor(Color.YELLOW)
-        } else {
-            button.alpha = AppPrefs.getAlpha(this)
-            button.setTextColor(AppPrefs.getFgColor(this))
-        }
+        button.alpha = AppPrefs.getAlpha(this)
+        button.setTextColor(if (BrightnessHelper.isMaxBrightness) Color.YELLOW else AppPrefs.getFgColor(this))
     }
 }
